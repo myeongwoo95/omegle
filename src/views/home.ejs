@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/public/css/home.css" />
+    <link rel="stylesheet" href="/public/css/paint.css" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -105,8 +106,65 @@
       </div>
     </div>
 
+    <!-- paint -->
+    <div class="container-fluid" id="paint-container">
+      <div class="row">
+        <main class="offset-3 col-9">
+          <div class="left-block">
+            <div class="colors">
+              <button type="button" value="#0000ff"></button>
+              <button type="button" value="#009fff"></button>
+              <button type="button" value="#0fffff"></button>
+              <button type="button" value="#bfffff"></button>
+              <button type="button" value="#000000"></button>
+              <button type="button" value="#333333"></button>
+              <button type="button" value="#666666"></button>
+              <button type="button" value="#999999"></button>
+              <button type="button" value="#ffcc66"></button>
+              <button type="button" value="#ffcc00"></button>
+              <button type="button" value="#ffff00"></button>
+              <button type="button" value="#ffff99"></button>
+              <button type="button" value="#003300"></button>
+              <button type="button" value="#555000"></button>
+              <button type="button" value="#00ff00"></button>
+              <button type="button" value="#99ff99"></button>
+              <button type="button" value="#f00000"></button>
+              <button type="button" value="#ff6600"></button>
+              <button type="button" value="#ff9933"></button>
+              <button type="button" value="#f5deb3"></button>
+              <button type="button" value="#330000"></button>
+              <button type="button" value="#663300"></button>
+              <button type="button" value="#cc6600"></button>
+              <button type="button" value="#deb887"></button>
+              <button type="button" value="#aa0fff"></button>
+              <button type="button" value="#cc66cc"></button>
+              <button type="button" value="#ff66ff"></button>
+              <button type="button" value="#ff99ff"></button>
+              <button type="button" value="#e8c4e8"></button>
+              <button type="button" value="#ffffff"></button>
+            </div>
+            <div class="brushes">
+              <button type="button" value="1"></button>
+              <button type="button" value="2"></button>
+              <button type="button" value="3"></button>
+              <button type="button" value="4"></button>
+              <button type="button" value="5"></button>
+            </div>
+            <div class="buttons">
+              <button id="clear" type="button">Clear</button>
+              <button id="save" type="button">Save</button>
+            </div>
+          </div>
+          <div class="right-block">
+            <canvas id="paint-canvas" width="640" height="400"></canvas>
+          </div>
+        </main>
+      </div>
+    </div>
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="/public/js/app.js"></script>
+    <script src="/public/js/paint.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
