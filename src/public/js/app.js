@@ -24,7 +24,6 @@ call.hidden = true;
 
 function getMsg(msg) {
   // TODO 처음에만 프로필이 나오고 그 이후는 프로파일 사진이 나오지않음
-  const time = `<p class="time">15h04</p>`;
   const divString = `<div class="message">
                       <div class="photo" style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
                         <div class="online"></div>
@@ -43,11 +42,7 @@ function getMsg(msg) {
 }
 
 function sendMsg() {
-  // TODO
-  // 1. 일단 시간쪽은 무시하고 개발
-  // 2. p(시간) 밑에 div가 붙으면 약간 css 깨짐
   const msg = msgInput.value;
-  const time = `<p class="response-time time">15h04</p>`;
   const divString = `<div class="message text-only">
                       <div class="response">
                         <p class="text">${msg}</p>
@@ -55,6 +50,7 @@ function sendMsg() {
                     </div>`;
 
   const newDiv = document.createElement("div");
+
   newDiv.innerHTML = divString;
 
   const messagesChat = document.querySelector(".messages-chat");
@@ -67,7 +63,7 @@ function sendMsg() {
 
 msgSendBtn.addEventListener("click", sendMsg);
 msgInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
+  if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
     sendMsg();
   }
@@ -217,17 +213,14 @@ socket.on("offer", async (data) => {
   const answer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(answer);
   socket.emit("answer", { answer, roomName });
-  console.log("sent the answer");
 });
 
 // A 브라우저: B가 보낸 answer를 받음
 socket.on("answer", (data) => {
-  console.log("recevied the offer");
   myPeerConnection.setRemoteDescription(data.answer);
 });
 
 socket.on("ice", (data) => {
-  console.log("received candidate");
   myPeerConnection.addIceCandidate(data.ice);
 });
 
@@ -255,7 +248,6 @@ function makeConnection() {
 }
 
 function handleIce(data) {
-  console.log("sent candidate");
   socket.emit("ice", { ice: data.candidate, roomName });
 }
 

@@ -286,7 +286,8 @@ body {
   color: #fff;
   background-color: #4f6ebd;
   position: absolute;
-  right: 50px;
+  /* modified */
+  right: 0px;
   padding: 12px 12px 12px 12px;
   border-radius: 50px;
   font-size: 14pt;
