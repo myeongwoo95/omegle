@@ -7,7 +7,7 @@ let cameraOff = false;
 let roomName;
 let myDataChannel;
 
-const call = document.querySelector("#call"); // call div 태그
+const call = document.querySelector("#cameras-container"); // call div 태그
 const myFace = document.querySelector("#myFace"); // video 태그
 const muteBtn = document.querySelector("#mute"); // 오디오 on/off 버튼
 const cameraBtn = document.querySelector("#camera"); // 카메라 on/off 버튼
@@ -108,6 +108,8 @@ async function handleCameraChange() {
 const welcome = document.querySelector("#welcome");
 const welcomeForm = welcome.querySelector("form");
 
+const roomListContainer = document.querySelector("#room-list-container");
+
 async function initCall() {
   welcome.hidden = true;
   call.hidden = false;
@@ -117,6 +119,9 @@ async function initCall() {
 
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
+
+  roomListContainer.hidden = true;
+
   const input = welcomeForm.querySelector("input");
 
   // initCall를 먼저 실행하고 join_room을 실행야한다.
