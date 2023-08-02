@@ -17,7 +17,61 @@ muteBtn.addEventListener("click", handleMuteClick); // 오디오 on/off 버튼
 cameraBtn.addEventListener("click", handleCameraBtnClick); // 카메라 on/off 버튼
 camerasSelect.addEventListener("input", handleCameraChange); // select option 선택 이벤트
 
+const msgSendBtn = document.querySelector("#msg-send-btn"); // 메세지 input
+const msgInput = document.querySelector("#msg-input"); // 메세지 보내기 버튼
+
 call.hidden = true;
+
+function getMsg(msg) {
+  // TODO 처음에만 프로필이 나오고 그 이후는 프로파일 사진이 나오지않음
+  const time = `<p class="time">15h04</p>`;
+  const divString = `<div class="message">
+                      <div class="photo" style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
+                        <div class="online"></div>
+                      </div>
+                      <p class="text">${msg}</p>
+                    </div>`;
+
+  const newDiv = document.createElement("div");
+  newDiv.innerHTML = divString;
+
+  const messagesChat = document.querySelector(".messages-chat");
+  messagesChat.appendChild(newDiv);
+
+  msgInput.value = "";
+  messagesChat.scrollTop = messagesChat.scrollHeight;
+}
+
+function sendMsg() {
+  // TODO
+  // 1. 일단 시간쪽은 무시하고 개발
+  // 2. p(시간) 밑에 div가 붙으면 약간 css 깨짐
+  const msg = msgInput.value;
+  const time = `<p class="response-time time">15h04</p>`;
+  const divString = `<div class="message text-only">
+                      <div class="response">
+                        <p class="text">${msg}</p>
+                      </div>
+                    </div>`;
+
+  const newDiv = document.createElement("div");
+  newDiv.innerHTML = divString;
+
+  const messagesChat = document.querySelector(".messages-chat");
+  messagesChat.appendChild(newDiv);
+
+  msgString = myDataChannel.send(msg);
+  msgInput.value = "";
+  messagesChat.scrollTop = messagesChat.scrollHeight;
+}
+
+msgSendBtn.addEventListener("click", sendMsg);
+msgInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendMsg();
+  }
+});
 
 async function getCameras() {
   try {
@@ -28,6 +82,7 @@ async function getCameras() {
     cameras.forEach((camera) => {
       const option = document.createElement("option");
       option.value = camera.deviceId;
+
       option.innerText = camera.label;
       if (currentCamera.label === camera.label) {
         option.selected = true;
@@ -136,22 +191,25 @@ welcomeForm.addEventListener("submit", handleWelcomeSubmit);
 // A 브라우저: B가 방 입장하면 B에게 offer를 보냄
 socket.on("welcome", async () => {
   myDataChannel = myPeerConnection.createDataChannel("chat");
+
+  // 데이터 채널 생성자 : 메세지 수신 이벤트 리스너 등록
   myDataChannel.addEventListener("message", (event) => {
-    console.log("msg", event.data);
+    getMsg(event.data);
   });
 
   const offer = await myPeerConnection.createOffer();
   myPeerConnection.setLocalDescription(offer);
   socket.emit("offer", { roomName, offer });
-  console.log("sent the offer");
 });
 
 // B 브라우저: A가 보낸 offer를 받고 A에게 answer을 보냄
 socket.on("offer", async (data) => {
   myPeerConnection.addEventListener("datachannel", (event) => {
     myDataChannel = event.channel;
+
+    // 데이터 채널 구독자 : 메세지 수신 이벤트 리스너 등록
     myDataChannel.addEventListener("message", (event) => {
-      console.log("msg", event.data);
+      getMsg(event.data);
     });
   });
 

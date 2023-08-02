@@ -2,6 +2,9 @@ body {
   background-color: #f5f5f5;
 }
 
+#cameras-container {
+}
+
 .container {
   padding: 0;
   background-color: #fff;
@@ -175,7 +178,7 @@ body {
 }
 
 .chat {
-  /* width: calc(65% - 85px); */
+  height: 100%;
 }
 
 .header-chat {
@@ -206,7 +209,9 @@ body {
 }
 
 .chat .messages-chat {
+  height: 650px;
   padding: 25px 35px;
+  overflow-y: scroll;
 }
 
 .chat .messages-chat .message {
