@@ -18,12 +18,16 @@ app.get("/", (req, res) => {
   res.render("home", { publicRooms, numOfPublicRooms });
 });
 
-app.get("/*", (req, res) => {
-  res.redirect("/");
-});
+app.get("/api/room/isFull", (req, res) => {
+  const roomName = req.query.roomName;
+  const room = io.sockets.adapter.rooms.get(roomName);
 
-app.get("/test", (req, res) => {
-  res.redirect("/");
+  // 방이 이미 존재하고, 유저가 2명 이상
+  if (room && room.size >= 2) {
+    res.json({ isFull: true });
+  } else {
+    res.json({ isFull: false });
+  }
 });
 
 function getCountPublicRooms() {
@@ -76,13 +80,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("join_room", (data, isFullRoom) => {
+  socket.on("join_room", (data) => {
     const room = io.sockets.adapter.rooms.get(data.roomName);
 
-    // 방이 이미 존재하고, 유저가 2명 이상인 경우 참가하지못함
-    if (room && room.size >= 2) {
-      isFullRoom(true);
-    } else {
+    // 방이 이미 존재하고, 유저가 2명 이상이 아닌 경우(부정문)
+    if (!(room && room.size >= 2)) {
       socket.join(data.roomName);
       socket.to(data.roomName).emit("welcome");
 
@@ -90,8 +92,6 @@ io.on("connection", (socket) => {
       io.sockets.emit("change_publicRooms", {
         publicRooms: getPublicRooms(),
       });
-
-      isFullRoom(false);
     }
   });
 

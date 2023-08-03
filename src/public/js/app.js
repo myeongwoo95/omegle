@@ -157,7 +157,7 @@ async function handleCameraChange() {
   }
 }
 
-/** 방 입장/생성 버튼 이벤트 */
+/** 방 생성(입장) 버튼 */
 const welcome = document.querySelector("#welcome");
 const welcomeForm = welcome.querySelector("form");
 const roomListContainer = document.querySelector("#room-list-container");
@@ -169,32 +169,32 @@ async function initCall() {
   makeConnection();
 }
 
-function initPage(isFullRoom) {
-  if (isFullRoom) {
-    roomListContainer.hidden = false;
-    welcome.hidden = false;
-    call.hidden = true;
-
-    welcomeForm.querySelector("input").value = "";
-    roomName = "";
-
-    setTimeout(function () {
-      alert("이미 존재하는 방이거나, 방이 꽉찼습니다.");
-    }, 100);
+async function isRoomFull(roomName) {
+  try {
+    const response = await fetch(`/api/room/isFull?roomName=${roomName}`);
+    const data = await response.json();
+    return data.isFull;
+  } catch (error) {
+    console.error("오류 발생:", error);
   }
 }
 
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
   const input = welcomeForm.querySelector("input");
+  const isFull = await isRoomFull(input.value);
 
-  // 반드시 initCall를 먼저 실행하고 join_room을 실행야한다.
-  await initCall();
-  socket.emit("join_room", { roomName: input.value }, initPage);
+  if (!isFull) {
+    // 반드시 initCall를 먼저 실행하고 join_room을 실행야한다.
+    await initCall();
+    socket.emit("join_room", { roomName: input.value });
 
-  roomName = input.value;
+    roomName = input.value;
+    roomListContainer.hidden = true;
+  } else {
+    alert("방이 꽉찻습니다.");
+  }
   input.value = "";
-  roomListContainer.hidden = true;
 }
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
@@ -212,7 +212,7 @@ roomListContainer_ul.addEventListener("click", async (event) => {
 
     roomListContainer.hidden = true;
     await initCall();
-    socket.emit("join_room", { roomName: innerTextValue }, initPage);
+    socket.emit("join_room", { roomName: innerTextValue });
     roomName = innerTextValue;
   }
 });
