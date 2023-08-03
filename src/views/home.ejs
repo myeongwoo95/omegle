@@ -23,8 +23,8 @@
     </div>
 
     <!-- Enter room -->
-    <div class="container-fluid">
-      <div class="row" id="welcome">
+    <div class="container-fluid" id="welcome">
+      <div class="row">
         <form class="offset-4 col-8">
           <input placeholder="room name" required type="text" />
           <button>Enter room</button>
@@ -37,7 +37,12 @@
       <div class="row">
         <h2 class="offset-4 my-5 col-8">Created Rooms</h2>
         <ul class="offset-4 col-8">
-          <li>테스트 상수 방 <button>Enter</button></li>
+          <% publicRooms.forEach(roomName => { %>
+          <li>
+            <span><%= roomName %></span>
+            <button class="btn btn-primary">Enter</button>
+          </li>
+          <% }); %>
         </ul>
       </div>
     </div>

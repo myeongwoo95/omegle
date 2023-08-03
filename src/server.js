@@ -12,12 +12,40 @@ app.set("views", __dirname + "/views");
 app.use("/public", express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
-  res.render("home");
+  const publicRooms = getPublicRooms();
+  const numOfPublicRooms = getCountPublicRooms();
+
+  res.render("home", { publicRooms, numOfPublicRooms });
 });
 
 app.get("/*", (req, res) => {
   res.redirect("/");
 });
+
+app.get("/test", (req, res) => {
+  res.redirect("/");
+});
+
+function getCountPublicRooms() {
+  return getPublicRooms().length;
+}
+
+function getPublicRooms() {
+  const publicRooms = [];
+
+  const sids = io.sockets.adapter.sids;
+  const rooms = io.sockets.adapter.rooms;
+
+  rooms.forEach((_, key) => {
+    const participants = Array.from(rooms.get(key) || new Set());
+
+    // private room이 아니면서 방에 유저가 1명만 존재할 때
+    if (sids.get(key) === undefined && participants.length === 1)
+      publicRooms.push(key);
+  });
+
+  return publicRooms;
+}
 
 /** Socket Server */
 const httpServer = http.createServer(app);
@@ -42,12 +70,29 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    // console.log("disconnect");
+    // 대기실에 있는 사람들 실시간을 방 목록 변경
+    io.sockets.emit("change_publicRooms", {
+      publicRooms: getPublicRooms(),
+    });
   });
 
-  socket.on("join_room", (data) => {
-    socket.join(data.roomName);
-    socket.to(data.roomName).emit("welcome");
+  socket.on("join_room", (data, isFullRoom) => {
+    const room = io.sockets.adapter.rooms.get(data.roomName);
+
+    // 방이 이미 존재하고, 유저가 2명 이상인 경우 참가하지못함
+    if (room && room.size >= 2) {
+      isFullRoom(true);
+    } else {
+      socket.join(data.roomName);
+      socket.to(data.roomName).emit("welcome");
+
+      // 대기실에 있는 사람들 실시간을 방 목록 변경
+      io.sockets.emit("change_publicRooms", {
+        publicRooms: getPublicRooms(),
+      });
+
+      isFullRoom(false);
+    }
   });
 
   socket.on("offer", (data) => {

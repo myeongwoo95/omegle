@@ -1,11 +1,13 @@
 const socket = io();
 
-let myPeerConnection;
-let myStream;
 let muted = false;
 let cameraOff = false;
-let roomName;
+
+let myPeerConnection;
 let myDataChannel;
+let myStream;
+
+let roomName;
 
 const call = document.querySelector("#cameras-container"); // call div 태그
 const myFace = document.querySelector("#myFace"); // video 태그
@@ -23,7 +25,7 @@ const msgInput = document.querySelector("#msg-input"); // 메세지 보내기 �
 call.hidden = true;
 
 function getMsg(msg) {
-  // TODO 처음에만 프로필이 나오고 그 이후는 프로파일 사진이 나오지않음
+  // TODO 처음에만 프로필이 나오고 그 이후는 프로파일 사진이 나오지않아야함
   const divString = `<div class="message">
                       <div class="photo" style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
                         <div class="online"></div>
@@ -155,10 +157,9 @@ async function handleCameraChange() {
   }
 }
 
-/** 방 생성 및 입장 */
+/** 방 입장/생성 버튼 이벤트 */
 const welcome = document.querySelector("#welcome");
 const welcomeForm = welcome.querySelector("form");
-
 const roomListContainer = document.querySelector("#room-list-container");
 
 async function initCall() {
@@ -168,21 +169,53 @@ async function initCall() {
   makeConnection();
 }
 
+function initPage(isFullRoom) {
+  if (isFullRoom) {
+    roomListContainer.hidden = false;
+    welcome.hidden = false;
+    call.hidden = true;
+
+    welcomeForm.querySelector("input").value = "";
+    roomName = "";
+
+    setTimeout(function () {
+      alert("이미 존재하는 방이거나, 방이 꽉찼습니다.");
+    }, 100);
+  }
+}
+
 async function handleWelcomeSubmit(event) {
   event.preventDefault();
-
-  roomListContainer.hidden = true;
-
   const input = welcomeForm.querySelector("input");
 
-  // initCall를 먼저 실행하고 join_room을 실행야한다.
+  // 반드시 initCall를 먼저 실행하고 join_room을 실행야한다.
   await initCall();
-  socket.emit("join_room", { roomName: input.value });
+  socket.emit("join_room", { roomName: input.value }, initPage);
+
   roomName = input.value;
   input.value = "";
+  roomListContainer.hidden = true;
 }
 
 welcomeForm.addEventListener("submit", handleWelcomeSubmit);
+
+/** 방 클릭해서 입장하기 */
+const roomListContainer_ul = document.querySelector("#room-list-container ul");
+roomListContainer_ul.addEventListener("click", async (event) => {
+  event.preventDefault();
+  const tagName = event.target.tagName;
+
+  if (tagName === "BUTTON") {
+    const liElement = event.target.closest("li");
+    const spanElement = liElement.querySelector("span");
+    const innerTextValue = spanElement.innerText;
+
+    roomListContainer.hidden = true;
+    await initCall();
+    socket.emit("join_room", { roomName: innerTextValue }, initPage);
+    roomName = innerTextValue;
+  }
+});
 
 // A 브라우저: B가 방 입장하면 B에게 offer를 보냄
 socket.on("welcome", async () => {
@@ -222,6 +255,27 @@ socket.on("answer", (data) => {
 
 socket.on("ice", (data) => {
   myPeerConnection.addIceCandidate(data.ice);
+});
+
+socket.on("change_publicRooms", (data) => {
+  const ul = document.querySelector("#room-list-container ul");
+  ul.innerHTML = "";
+
+  if (data.publicRooms.length === 0) {
+    ul.innerHTML = "";
+    return;
+  }
+
+  data.publicRooms.forEach((publicRoom) => {
+    li_string = `<li>
+                  <span>${publicRoom}</span>
+                  <button class="btn btn-primary">Enter</button>
+                </li>`;
+
+    const li = document.createElement("li");
+    li.innerHTML = li_string;
+    ul.append(li);
+  });
 });
 
 function makeConnection() {
