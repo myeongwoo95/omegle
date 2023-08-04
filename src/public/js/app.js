@@ -9,7 +9,7 @@ let myStream;
 
 let roomName;
 
-const spinner = document.querySelector("#spinner") // spinner img 태그
+const spinner = document.querySelector("#spinner"); // spinner img 태그
 
 const call = document.querySelector("#cameras-container"); // call div 태그
 const myFace = document.querySelector("#myFace"); // video 태그
@@ -188,6 +188,7 @@ async function handleWelcomeSubmit(event) {
   const isFull = await isRoomFull(input.value);
 
   if (!isFull) {
+    spinner.hidden = false;
     // 반드시 initCall를 먼저 실행하고 join_room을 실행야한다.
     await initCall();
     socket.emit("join_room", { roomName: input.value });
@@ -214,6 +215,8 @@ roomListContainer_ul.addEventListener("click", async (event) => {
     const innerTextValue = spanElement.innerText;
 
     roomListContainer.hidden = true;
+
+    spinner.hidden = false;
     await initCall();
     socket.emit("join_room", { roomName: innerTextValue });
     roomName = innerTextValue;
@@ -249,16 +252,18 @@ socket.on("offer", async (data) => {
   const answer = await myPeerConnection.createAnswer();
   myPeerConnection.setLocalDescription(answer);
   socket.emit("answer", { answer, roomName });
+  spinner.hidden = true;
 });
 
 // A 브라우저: B가 보낸 answer를 받음
 socket.on("answer", (data) => {
   myPeerConnection.setRemoteDescription(data.answer);
+  spinner.hidden = true;
 });
 
 // 브라우저가 떠났을 때 상대방 측에서 실행되는 로직
 socket.on("bye", () => {
-  peerFace.srcObject = null
+  peerFace.srcObject = null;
   spinner.hidden = false;
 });
 
