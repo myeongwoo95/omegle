@@ -70,7 +70,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnecting", () => {
-    // console.log("disconnecting");
+    // 소켓이 현재 참가하고 있는 모든 방에 대해 반복문
+    socket.rooms.forEach((room) => {
+      socket.to(room).emit("bye", {});
+    });
   });
 
   socket.on("disconnect", () => {

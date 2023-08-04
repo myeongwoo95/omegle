@@ -11,7 +11,10 @@
       integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <title>Document</title>
   </head>
   <body>
@@ -47,63 +50,40 @@
       </div>
     </div>
 
-    <!-- Cameras -->
+    <!-- Cameras / chatting-->
     <div class="container-fluid" id="cameras-container">
       <div class="row">
-        <div
-          id="MyStream"
-          class="col-4 d-flex flex-column"
-        >
-          <video id="peerFace" autoplay playsinline height="385"></video>
-          <video
-            id="myFace"
-            class="mt-2"
-            autoplay
-            playsinline
-            height="385"
-          ></video>
+
+        <!-- Left: Cameras -->
+        <div id="MyStream" class="col-4 d-flex flex-column">
+          <div id="peerFace-container">
+            <video id="peerFace" autoplay playsinline></video>
+            <img src="/public/img/spinner.gif" alt="spinner" id="spinner">
+          </div>
+
+          <div id="myface-container">
+            <video id="myFace" autoplay playsinline></video>
+          </div>
         </div>
 
-        <div class="col-8">
-          <section class="chat">
-            <div class="messages-chat">
+        <!-- Right: Chat -->
+        <div class="col-8" id="chat-container">
+          <section class="chat d-flex flex-column">
 
-              <p>👋 먼저 인사를 건네보세요~</p>
-              
-              
-              <!-- 상대방이 쓴글 -->
-              <!-- <div class="message">
-                <div class="photo" style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
-                  <div class="online"></div>
-                </div>
-                <p class="text"> Hi, how are you ? </p>
-              </div>
+            <!-- msg: read -->
+            <div class="messages-chat"></div>
 
-              <div class="message text-only">
-                <p class="text"> What are you doing tonight ? Want to go take a drink ?</p>
-              </div> -->
-
-              <!-- 내가 쓴글 -->
-              <!-- <div class="message text-only">
-                <div class="response">
-                  <p class="text"> Hey Megan ! It's been a while 😃</p>
-                </div>
-              </div> -->
-
-              <!-- <p class="response-time time"> 15h04</p> -->
-              
-            </div>
-
+            <!-- msg: write -->
             <div class="footer-chat">
-              <i class="icon fa fa-smile-o clickable" style="font-size:25pt;" aria-hidden="true"></i>
-              <input type="text" class="write-message" placeholder="Type your message here" id="msg-input"></input>
-              <i class="icon send fa fa-paper-plane-o clickable" aria-hidden="true" id="msg-send-btn"></i>
+              <i class="icon fa fa-smile-o clickable" style="font-size: 25pt" aria-hidden="true"></i>
+              <textarea type="text" class="write-message" placeholder="Type your message here" id="msg-input"></textarea>
+              <i class="icon send fa fa-paper-plane-o clickable" aria-hidden="true" id="msg-send-btn" ></i>
             </div>
-
+            
           </section>
         </div>
 
-        <div style="display: none">
+        <div style="display: none;">
           <select id="cameras"></select>
           <button id="mute">Mute</button>
           <button id="camera">Turn Camera Off</button>
@@ -112,7 +92,7 @@
     </div>
 
     <!-- paint -->
-    <div class="container-fluid" id="paint-container" style="display: none;">
+    <div class="container-fluid" id="paint-container" style="display: none">
       <div class="row">
         <main class="offset-3 col-9">
           <div class="left-block">

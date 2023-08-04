@@ -9,6 +9,8 @@ let myStream;
 
 let roomName;
 
+const spinner = document.querySelector("#spinner") // spinner img 태그
+
 const call = document.querySelector("#cameras-container"); // call div 태그
 const myFace = document.querySelector("#myFace"); // video 태그
 const muteBtn = document.querySelector("#mute"); // 오디오 on/off 버튼
@@ -23,15 +25,13 @@ const msgSendBtn = document.querySelector("#msg-send-btn"); // 메세지 input
 const msgInput = document.querySelector("#msg-input"); // 메세지 보내기 버튼
 
 call.hidden = true;
+spinner.hidden = true;
 
 function getMsg(msg) {
-  // TODO 처음에만 프로필이 나오고 그 이후는 프로파일 사진이 나오지않아야함
-  const divString = `<div class="message">
-                      <div class="photo" style="background-image: url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80);">
-                        <div class="online"></div>
-                      </div>
-                      <p class="text">${msg}</p>
-                    </div>`;
+  const formattedMsg = msg.replace(/\n/g, "<br>");
+  const divString = `<div class="message text-only">
+                       <p class="text">${formattedMsg}</p>
+                     </div>`;
 
   const newDiv = document.createElement("div");
   newDiv.innerHTML = divString;
@@ -45,9 +45,12 @@ function getMsg(msg) {
 
 function sendMsg() {
   const msg = msgInput.value;
+  const formattedMsg = msg.replace(/\n/g, "<br>");
+  if (msg === "") return;
+
   const divString = `<div class="message text-only">
                       <div class="response">
-                        <p class="text">${msg}</p>
+                        <p class="text">${formattedMsg}</p>
                       </div>
                     </div>`;
 
@@ -251,6 +254,12 @@ socket.on("offer", async (data) => {
 // A 브라우저: B가 보낸 answer를 받음
 socket.on("answer", (data) => {
   myPeerConnection.setRemoteDescription(data.answer);
+});
+
+// 브라우저가 떠났을 때 상대방 측에서 실행되는 로직
+socket.on("bye", () => {
+  peerFace.srcObject = null
+  spinner.hidden = false;
 });
 
 socket.on("ice", (data) => {

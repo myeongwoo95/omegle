@@ -2,25 +2,35 @@
   box-sizing: border-box;
 }
 
-.online {
-  position: relative;
-  top: 30px;
-  left: 35px;
-  width: 13px;
-  height: 13px;
-  background-color: #8bc34a;
-  border-radius: 13px;
-  border: 3px solid #fafafa;
+video{
+  width: 100%;
+  height: 100%;
 }
 
-.chat {
+#MyStream{
+  height: 100%;
+}
+
+#peerFace-container{
+  position: relative;
+}
+
+#spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%); 
+}
+
+.chat{
   height: 100%;
 }
 
 .chat .messages-chat {
-  height: 650px;
-  padding: 25px 35px;
-  overflow-y: scroll;
+  height: 80%;
+  overflow-y: auto;
 }
 
 .chat .messages-chat .message {
@@ -29,39 +39,11 @@
   margin-bottom: 8px;
 }
 
-.chat .messages-chat .message .photo {
-  display: block;
-  width: 45px;
-  height: 45px;
-  background: #e6e7ed;
-  -moz-border-radius: 50px;
-  -webkit-border-radius: 50px;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-}
-
 .chat .messages-chat .text {
   margin: 0 35px;
   background-color: #f6f6f6;
   padding: 15px;
   border-radius: 12px;
-}
-
-.text-only {
-  margin-left: 45px;
-}
-
-.time {
-  font-size: 10px;
-  color: lightgrey;
-  margin-bottom: 10px;
-  margin-left: 85px;
-}
-
-.response-time {
-  float: right;
-  margin-right: 40px !important;
 }
 
 .response {
@@ -75,14 +57,11 @@
 }
 
 .footer-chat {
-  width: calc(65% - 66px);
-  height: 80px;
+  height: 15%;
   display: flex;
   align-items: center;
-  position: absolute;
-  bottom: 20px;
   background-color: transparent;
-  border-top: 2px solid #eee;
+  border: 2px solid #eee;
 }
 
 .chat .footer-chat .icon {
@@ -95,8 +74,7 @@
   color: #fff;
   background-color: #4f6ebd;
   position: absolute;
-  /* modified */
-  right: 0px;
+  right: 30px;
   padding: 12px 12px 12px 12px;
   border-radius: 50px;
   font-size: 14pt;
@@ -118,9 +96,13 @@
 .write-message {
   border: none !important;
   width: 60%;
-  height: 50px;
+  height: 90%;
   margin-left: 20px;
   padding: 10px;
+}
+
+.write-message:focus {
+  outline: none;
 }
 
 .footer-chat *::-webkit-input-placeholder {
